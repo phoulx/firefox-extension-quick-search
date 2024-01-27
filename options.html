@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Options</title>
+    <script src="options.js"></script>
+    <style>
+      body {
+        min-width: 400px;
+      }
+
+      #primary,
+      #secondary {
+        width: 100%;
+      }
+
+      #checkboxContainer {
+        display: flex;
+        align-items: center;
+      }
+
+      #reset {
+        float: right;
+        margin-right: 10px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h2>Search Engines Prefix</h2>
+    <div role="main">
+      <form>
+        Primary: <label id="shortcut1"></label> (in background: <label id="shortcut3"></label>)
+        <input type="text" id="primary" /><br />
+        Secondary: <label id="shortcut2"></label>
+        <input type="text" id="secondary" /><br /><br />
+        <div id="checkboxContainer">
+          <input type="checkbox" id="openNewTab" />
+          <label for="openNewTab">Open in a new tab</label>
+        </div>
+        <button type="button" id="reset">Reset to defaults</button>
+      </form>
+    </div>
+  </body>
+</html>
