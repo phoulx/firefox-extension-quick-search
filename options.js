@@ -1,9 +1,25 @@
-const background = browser.extension.getBackgroundPage();
 const shortcutIds = ["shortcut1", "shortcut2", "shortcut3"];
 const searchEngines = ["primary", "secondary"];
 
-document.addEventListener("DOMContentLoaded", () => {
-  // Show current hotkeys
+let primaryInput = document.getElementById("primary");
+let secondaryInput = document.getElementById("secondary");
+let newTabChk = document.getElementById("openNewTab");
+let resetBtn = document.getElementById("reset");
+
+let formElements = [primaryInput, secondaryInput, newTabChk];
+
+initialize();
+
+formElements.forEach((elem) => {
+  elem.addEventListener("change", updateConfig);
+});
+
+resetBtn.addEventListener("click", () => {
+  displayConfig(getDefaultConfig());
+  updateConfig();
+});
+
+function initialize() {
   browser.commands.getAll((commands) => {
     commands.forEach((command, index) => {
       document.getElementById(shortcutIds[index]).textContent =
@@ -11,40 +27,38 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Populate options page with current values
-  searchEngines.forEach((searchId) => {
-    document.getElementById(searchId).value = background.config[searchId];
+  browser.storage.local.get("quickSearchConfig").then((stored) => {
+    displayConfig(stored.quickSearchConfig);
   });
-  document.getElementById("openNewTab").checked =
-    background.config["openNewTab"];
+}
 
-  // Reset to default values
-  document.getElementById("reset").addEventListener(
-    "click",
-    () => {
-      const defaultConfig = background.getDefaultConfig();
-      searchEngines.forEach((searchId) => {
-        document.getElementById(searchId).value = defaultConfig[searchId];
-      });
-      document.getElementById("openNewTab").checked =
-        defaultConfig["openNewTab"];
-    },
-    false
-  );
+function displayConfig(config) {
+  primaryInput.value = config["primary"];
+  secondaryInput.value = config["secondary"];
+  newTabChk.checked = config["openNewTab"];
+}
 
-  // Save config when closing options page
-  addEventListener(
-    "unload",
-    () => {
-      searchEngines.forEach((searchId) => {
-        background.config[searchId] = document.getElementById(searchId).value;
-      });
-      background.config["openNewTab"] =
-        document.getElementById("openNewTab").checked;
-      background.browser.storage.sync.set({
-        quickSearchConfig: background.config,
-      });
-    },
-    true
-  );
-});
+function updateConfig() {
+  const current = collectConfig();
+  browser.storage.local.set({ quickSearchConfig: current });
+  browser.storage.session.set({ quickSearchConfig: current });
+  console.log(current);
+}
+
+function getDefaultConfig() {
+  const defaults = {
+    primary: "https://www.google.com/search?q=",
+    secondary: "https://en.wikipedia.org/wiki/Special:Search/",
+    openNewTab: true,
+  };
+  return defaults;
+}
+
+function collectConfig() {
+  const config = {
+    primary: primaryInput.value,
+    secondary: secondaryInput.value,
+    openNewTab: newTabChk.checked,
+  };
+  return config;
+}

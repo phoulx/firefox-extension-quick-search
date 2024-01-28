@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Quick Search",
-  "version": "0.1",
+  "version": "0.2",
   "description": "Search or open on selected text.",
   "icons": {
     "99": "icons/icon-99.png"
@@ -15,7 +15,12 @@
       "id": "{8140159e-3fda-4058-8a91-32b918741bf0}"
     }
   },
-
+  "action": {
+    "default_icon": {
+      "99": "icons/icon-99.png"
+    },
+    "default_title": "Preferences"
+  },
   "commands": {
     "openSearch": {
       "suggested_key": {
